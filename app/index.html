@@ -1,0 +1,109 @@
+<!doctype>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<link rel="stylesheet" href="dapp-styles.css" />
+		
+		<script type='text/plain' src="https://raw.githubusercontent.com/ethereum/web3.js/0.16.0/dist/web3.min.js"></script>
+		<script type='text/javascript' src="package/compilation/contract.sol.js"></script>
+		<!--<script src='crypto/openpgp.min.js'></script>
+		<script src='crypto/openpgp.worker.min.js'></script>-->
+		<script src="contract.js">
+			
+			
+			
+
+		</script>
+	</head>
+	<body bgcolor='#E6E6FA'>
+		
+		
+			
+			<header class="dapp-header">
+					<nav>
+						<ul>
+							<li>
+								<a href="index.html" class="active">
+									<i class="icon-envelope-letter"></i>
+									<span>Invoices</span>
+								</a>
+								<a href="index2.html">
+									<i class="icon-like"></i>
+									<span>Payment Confirmation</span>
+								</a>
+								<a href="index3.html">
+									<i class="icon-login"></i>
+									<span>Connect to account</span>
+								</a>
+								<a href="index4.html">
+									<i class="icon-hourglass"></i>
+									<span>Check and Alert</span>
+								</a>
+								
+							</li>
+						</ul>
+					</nav>
+
+			</header>
+
+			<div class="dapp-flex-content">
+
+				<aside class="dapp-aside">
+
+				</aside>
+
+				<main class="dapp-content">
+					
+					<div class="dapp-container">
+						<h1>Enter your invoice info:</h1>
+						<div>
+							<form method='post' onsubmit='manualEntry()'>
+								<div>
+									<p>
+										<label for='yourName'>Who are you?</label>:
+
+										<select name='yourName' size='1' id='yourName'>
+											<option value='Mr White' type='string'>Mr White</option>
+											<option value='Mr Blonde' type='string'>Mr Blonde</option>
+											<option value='Mr Pink' type='string'>Mr Pink</option>
+											<option value='Mr Blue' type='string'>Mr Blue</option>
+										</select>
+									</p>
+
+
+									<p>
+										<label for='otherName'>Who's client are you?</label>:
+
+										<select name='otherName' size='1' id='otherName'>
+											<option value='Mr White' type='string'>Mr White</option>
+											<option value='Mr Blonde' type='string'>Mr Blonde</option>
+											<option value='Mr Pink' type='string'>Mr Pink</option>
+											<option value='Mr Blue' type='string'>Mr Blue</option>
+										</select>
+									</p>
+								</div>
+								<input type='submit' name='Submit' value='submit'>
+							</form>
+						</div>
+					</div>
+					<div>
+						<form method='post'>
+							<p>
+								<label for='message'>Alerts</label><br/>
+								<textarea name='message' id='message' rows='5'></textarea>
+							</p>
+						</form>
+					</div>
+
+
+				</main>
+
+				<aside class="dapp-actionbar">
+
+				</aside>
+			</div>
+
+
+		
+	</body>
+</html>

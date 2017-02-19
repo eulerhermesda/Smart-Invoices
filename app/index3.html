@@ -1,0 +1,75 @@
+<!doctype>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<link rel="stylesheet" href="dapp-styles.css" />
+		
+		<script type='text/plain' src="https://raw.githubusercontent.com/ethereum/web3.js/0.16.0/dist/web3.min.js"></script>
+		<script type="text/javascript" src="package/compilation/contract.sol.js"></script>
+		<!--<script src='crypto/openpgp.min.js'></script>
+		<script src='crypto/openpgp.worker.min.js'></script>-->
+		<script src="contract.js">
+			
+			
+			
+
+		</script>
+	</head>
+	<body bgcolor='#E6E6FA'>
+
+
+
+		<header class="dapp-header">
+			<nav>
+				<ul>
+					<li>
+						<a href="index.html">
+							<i class="icon-envelope-letter"></i>
+							<span>Invoices</span>
+						</a>
+						<a href="index2.html">
+							<i class="icon-like"></i>
+							<span>Payment Confirmation</span>
+						</a>
+						<a href="index3.html" class="active">
+							<i class="icon-login"></i>
+							<span>Connect to account</span>
+						</a>
+						<a href="index4.html">
+							<i class="icon-hourglass"></i>
+							<span>Check and Alert</span>
+						</a>
+
+					</li>
+				</ul>
+			</nav>
+
+		</header>
+
+		<div class="dapp-flex-content">
+
+			<aside class="dapp-aside">
+
+			</aside>
+
+			<main class="dapp-content">
+				
+				<div class="dapp-container">
+					<h1><em> FOR THE ADMIN ONLY </em>Enter the address of the client TCI contract</h1>
+					<div>
+						<form method='post'>
+							<div>
+								<p>
+									<label for='clientContract'>Copy/paste the address</label>:
+									<input type='string' name='clientContract' id='clientContract'>
+									<button onclick='setClient()'>Set</button>
+								</p>
+							</div>
+						</form>
+					</div>
+				</div>
+			</main>
+		</div>
+	</body>
+</html>
+						

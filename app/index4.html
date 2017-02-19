@@ -1,0 +1,95 @@
+<!doctype>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<link rel="stylesheet" href="dapp-styles.css" />
+		
+		<script type='text/plain' src='https://raw.githubusercontent.com/ethereum/web3.js/0.16.0/dist/web3.min.js'></script>
+		<script type='text/javascript' src='package/compilation/contract.sol.js'></script>
+		<!--<script type="text/javascript" src="crypto/openpgp.min.js"></script>
+		<script type="text/javascript" src="crypto/openpgp.worker.min.js"></script>-->
+		<script src="contract.js">
+			
+			
+
+
+		</script>
+	</head>
+	<body bgcolor='#E6E6FA'>
+		
+		
+			
+			<header class="dapp-header">
+					<nav>
+						<ul>
+							<li>
+								<a href="index.html">
+									<i class="icon-envelope-letter"></i>
+									<span>Invoices</span>
+								</a>
+								<a href="index2.html">
+									<i class="icon-like"></i>
+									<span>Payment Confirmation</span>
+								</a>
+								<a href="index3.html">
+									<i class="icon-login"></i>
+									<span>Connect to account</span>
+								</a>
+								<a href="index4.html" class="active">
+									<i class="icon-hourglass"></i>
+									<span>Check and Alert</span>
+								</a>
+								
+							</li>
+						</ul>
+					</nav>
+
+			</header>
+
+			<div class="dapp-flex-content">
+
+				<aside class="dapp-aside">
+
+				</aside>
+
+				<main class="dapp-content">
+					<div class="dapp-container">
+						<h1>Check if invoices are paid, and alert the relevant people<em>(for the demo only)</em></h1>
+						<div>
+							<form method='post' onsubmit='checkFunction()'>
+								<div>
+									<p>
+										<label for='whichP'>What client do you wish to check?</label>:
+										<select name='whichP' size='1' id='whichP'>
+											<option value='Mr White' type='string'>Mr White</option>
+											<option value='Mr Blonde' type='string'>Mr Blonde</option>
+											<option value='Mr Pink' type='string'>Mr Pink</option>
+											<option value='Mr Blue' type='string'>Mr Blue</option>
+										</select>
+									</p>
+									<p>
+										<label for='whichR'>Which invoice?</label>:
+										<select name='whichR' size='1' id='whichR'>
+											<option value='0' type='number'>first</option>
+											<option value='1' type='number'>second</option>
+											<option value='2' type='number'>third</option>
+										</select>
+									</p>
+								</div>
+								<input type='submit' name='Check' value='query'>
+							</form>
+						</div>
+
+					</div>
+
+				</main>
+
+				<aside class="dapp-actionbar">
+
+				</aside>
+			</div>
+
+
+		
+	</body>
+</html>
