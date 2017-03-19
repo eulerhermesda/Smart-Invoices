@@ -1,28 +1,15 @@
 pragma solidity ^0.4.8;
 
-contract TCI_contract{
-	
-//GLOBAL BASE PARAMETERS-------------------------------------------
-	
-	
-	modifier onlyBy1(address _from){//useful to enter invoices
-		if (tx.origin != _from) throw;
-		_;
-	}
+import "./TCI_lib.sol";
 
-	modifier onlyBy2(address _from1, address _from2){//useful to check the invoice
-		if (tx.origin != _from1 && tx.origin != _from2) throw;
-		_;
-	}
-	
-	modifier onlyBy2ByID(string ID){//@TODO
-		buyer = invoices[invoiceIDMatching[keccak256(ID)]].buyerAddress
-		seller = invoices[invoiceIDMatching[keccak256(ID)]].sellerAddress
-		if (tx.origin != buyer && tx.origin != seller) throw;
-		_;
-	}
-	
-	
+contract TCI_contract{
+
+//GLOBAL BASE PARAMETERS-------------------------------------------
+
+
+
+
+
 //------------------------------------------------------------------
 //STRUCTURE TO STORE THE INVOICES-----------------------------------
 	struct Invoice{
@@ -45,9 +32,9 @@ contract TCI_contract{
 
 	function registerInvoice(address buyer, address seller, int dueDate, string ID){
 	/* Function for registering a new invoice
-	 * If it is either the buyer of the seller that is entering the invoice, then the 
+	 * If it is either the buyer of the seller that is entering the invoice, then the
 	 * buyerValidated or sellerValidated are respectively set to True
-	 * If it is a third party pushing the invoice, then those two booleans are 
+	 * If it is a third party pushing the invoice, then those two booleans are
 	 * left at false
 	 */
 		invoice = new Invoice();
@@ -57,12 +44,13 @@ contract TCI_contract{
 		invoice.ID = ID;
 		invoice.buyerPaid = false;
 		invoice.sellerGotPaid = false;
-		
+
 
 		// If the buyer is creating the invoice then the invoice is validated from
 		// the buyer side. Reciprocally from the seller side
 
-		if (tx.origin == buyer){
+		if (tx.origin == buyer){ //@TODO faire gaffe a la difference entre tx.origin et msg.sender, dans le premier cas c'est l'origine absolue de la transaction,
+															//dans l'autre c'est l'interlocuteur précédent (peut etre un contrat)
 			invoice.buyerValidated = true;
 			invoice.sellerValidated = false;
 		}
@@ -74,17 +62,25 @@ contract TCI_contract{
 		invoiceIDMatching[keccak256(ID)] = buyer;
 	}
 
-	function validateInvoice(string ID) onlyBy2ByID(ID){
+	function validateInvoice(string ID) TCI_lib.onlyBy2ByID(ID){
 	/* Function for validating an invoice:
 	 * ID : ID of the invoice to be validated
-	 * For this function we should check whether the person calling this function is 
+	 * For this function we should check whether the person calling this function is
 	 * either the buyer or the seller. If that is true then we set the matching boolean
 	 * to true.
 	 */
+	 _invoice = invoices[invoiceIDMatching[keccak256(ID)]];
 
-	}	
+	 if (tx.origin == buyer){
+		 _invoice.buyerValidated=true;
+	 }
 
-	function payInvoice(address buyerSeller, string ID) onlyby2ByID(ID){
+	 if (tx.origin == seller){
+		 _invoice.sellerValidated=true;
+	 }
+	}
+
+	function payInvoice(address buyerSeller, string ID) TCI_lib.onlyby2ByID(ID){
 	/* Function to mark that the buyer paid the invoice or that the seller got paid
 	 * We could imagine having a trustable third party, or a zkp being used to check that
 	 * the transfer was really made.
@@ -94,7 +90,7 @@ contract TCI_contract{
 	}
 
 	function sendMessage(Invoice Inv){
-	
+
 	}
 
 	function lookUpInvoice(string ID){
