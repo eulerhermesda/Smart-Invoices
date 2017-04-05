@@ -17,7 +17,7 @@ contract TCI_contract{
 		address sellerAddress;
 		bool	buyerValidated;
 		bool	sellerValidated;
-		int	dueDate;
+		int		dueDate;
 		bool	buyerPaid;
 		bool	sellerGotPaid;
 		string  ID;
@@ -87,11 +87,15 @@ contract TCI_contract{
 	 * For this demo we will assume that only the buyer and the seller can validate the
 	 * payment
 	 */
+		int a =0;
 	}
 
 	function sendMessage(Invoice Inv){
+		int a =0;
 
 	}
 
 	function lookUpInvoice(string ID){
+		int a = 0;
 	}
+}
