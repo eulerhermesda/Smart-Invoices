@@ -11,8 +11,14 @@ if (typeof web3 !== 'undefined') {
 }
 
 var MENUDATA = {
-  nameList:['Invoices','Payment Confirmation', 'Check and Alert']
+  nameList:['Invoices', 'New invoice']
 };
+
+var ACCOUNTSNAME = {
+  '0x76d499C529cc06323EA0c5d5edcf9B11c02597cB':'Seller',
+  '0xC30F6af2c92eFd81DC27D30ccD573B0dA675D3b1':'Buyer',
+  '0x8764eAD14051407D2761FeE6fab8597B07FE803c': 'Euler Hermes'
+}
 
 // The full page
 class App extends React.Component{
@@ -50,10 +56,12 @@ class App extends React.Component{
     return(
       <div>
         <Menu
-          entries = {this.props.menudata.nameList} onClick={(i)=>this.handleMenuClick(i)}/>   
+          entries = {this.props.menudata.nameList} onClick={(i)=>this.handleMenuClick(i)}
+          accountsName = {this.props.accountsName}/>   
         <Page
           currentPage = {this.state.currentPage} currentAccount={web3.eth.accounts[0]} 
-          onClick={(value,fields)=> this.handlePageClick(value,fields)}/> 
+          onClick={(value,fields)=> this.handlePageClick(value,fields)}
+          accountsName = {this.props.accountsName}/> 
       </div>
     );
   }
@@ -72,15 +80,24 @@ class Menu extends React.Component{
                 </a>);
       
     },this);
+    var nameOfAccount = this.props.accountsName[web3.eth.accounts[0]];
+
     return (
       <header className="dapp-header">
-        <nav>      
-          <ul>
-            <li>
-              {menuEntries}
-            </li>
-          </ul>
-        </nav>
+         
+          <div className="menuOne">
+            <nav>      
+              <ul>
+                <li>
+                  {menuEntries}
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div className="menuTwo">
+            Welcome {web3.eth.accounts[0]}!
+          </div>
+       
       </header>      
       )
   }
@@ -91,29 +108,92 @@ class Menu extends React.Component{
 // The content
 class Page extends React.Component{  
 
+  constructor(){
+    super();
+    this.state = {
+      invoiceId : [0,1,2,3,4],
+      invoiceBuyer : ['0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
+                      '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
+                      '0x8764eAD14051407D2761FeE6fab8597B07FE803c',
+                      '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
+                      '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1'],
+      invoiceSeller: ['0x76d499C529cc06323EA0c5d5edcf9B11c02597cB',
+                      '0x8764eAD14051407D2761FeE6fab8597B07FE803c',
+                      '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
+                      '0x8764eAD14051407D2761FeE6fab8597B07FE803c',
+                      '0x76d499C529cc06323EA0c5d5edcf9B11c02597cB'],
+      invoiceAmount : [50,100,150,200,300],
+      invoiceUnit : ["€", "$", "£","€","€"],
+      invoiceDueDate: ['13/04/2017', '09/04/2017','15/06/2017','15/05/2017','17/06/2017'],
+      invoiceStatus : ['', '','','',''],
+      invoiceSellerApproved : [1,1,0,1,1],
+      invoiceBuyerApproved : [0,1,0,1,1],
+      invoiceBuyerPaid : [0,1,1,1,0],
+      invoiceSellerGotPaid:[0,0,0,1,0],
+      invoiceSelected: null,     
 
+    };
+  }
 
   render(){
-    if (this.props.currentPage == 0){
+    // Here we determine the status of the invoice
+    
+    this.state.invoiceId.map(function(Id,index){
+      var status = null;
+      var sBuyerApproved = this.state.invoiceBuyerApproved[index];
+      var sBuyerPaid = this.state.invoiceBuyerPaid[index];
+      var sSellerApproved = this.state.invoiceSellerApproved[index];
+      var sSellerGotPaid = this.state.invoiceSellerGotPaid[index];
+
+      
+      var parts =this.state.invoiceDueDate[index].split('/');
+      var sInvoiceDueDate = new Date(parts[2],parts[1]-1,parts[0]); 
+      
+
+      // Today's date
+      var q = new Date();
+      var m = q.getMonth();
+      var d = q.getDate();
+      var y = q.getFullYear();
+      var date = new Date(y,m,d);
+      
+      // Invoice not approved if both parties didn't approve it. Going nowhere without that
+      if (!sBuyerApproved || !sSellerApproved){
+        status = "Waiting for Approval";
+      }
+
+      // Invoice approved but payment late
+      else if ( sInvoiceDueDate < date && (!sBuyerPaid || !sSellerGotPaid)){
+        status = "Late";
+      }
+
+      else if (sSellerGotPaid && sBuyerPaid){
+        status = "Paid";
+      }
+
+      this.state.invoiceStatus[index]=status;
+      
+    },this
+    );
+
+
+
+
+
+
+    if (this.props.currentPage == 1){
       return(<div>
           <InvoiceCreation onClick={(value,fields)=>this.props.onClick(value,fields)}
             />
-          }
         </div>
         );
     }
 
-    else if (this.props.currentPage==1){
-      return(<div>        
-          <PaymentConfirmation onClick={(value,fields)=>this.props.onClick(value,fields)}
-            />
-        </div>
-        );
-    }
 
-    else if (this.props.currentPage==2){
+    else if (this.props.currentPage==0){
       return(<div>         
-          <CheckAndAlert onClick={(value,fields)=>this.props.onClick(value,fields)}
+          <InvoicesList onClick={(value,fields)=>this.props.onClick(value,fields)}
+                        state = {this.state}
             />
         </div>
         );
@@ -150,26 +230,34 @@ class InvoiceCreation extends React.Component{
               <form method='post' onsubmit='manualEntry()'>
                 <div>
                   <p>
-                    <label for='yourName'>Who are you?</label>
+                    <label for='seller'>Seller</label><br/>
 
-                    <select name='yourName' size='1' id='yourName'>
-                      <option value='Mr White' type='string'>Mr White</option>
-                      <option value='Mr Blonde' type='string'>Mr Blonde</option>
-                      <option value='Mr Pink' type='string'>Mr Pink</option>
-                      <option value='Mr Blue' type='string'>Mr Blue</option>
+                    <select name='seller' size='1' id='seller'>
+                       <option value='0x76d499C529cc06323EA0c5d5edcf9B11c02597cB'>Seller</option>
+                      <option value='0xC30F6af2c92eFd81DC27D30ccD573B0dA675D3b1'>Buyer</option>
+                      <option value='0x8764eAD14051407D2761FeE6fab8597B07FE803c'>Euler Hermes</option>
                     </select>
                   </p>
 
 
                   <p>
-                    <label for='otherName'>Who's client are you?</label>
+                    <label for='buyer'>Buyer</label><br/>
 
-                    <select name='otherName' size='1' id='otherName'>
-                      <option value='Mr White' type='string'>Mr White</option>
-                      <option value='Mr Blonde' type='string'>Mr Blonde</option>
-                      <option value='Mr Pink' type='string'>Mr Pink</option>
-                      <option value='Mr Blue' type='string'>Mr Blue</option>
+                    <select name='buyer' size='1' id='buyer'>
+                       <option value='0x76d499C529cc06323EA0c5d5edcf9B11c02597cB'>Seller</option>
+                      <option value='0xC30F6af2c92eFd81DC27D30ccD573B0dA675D3b1'>Buyer</option>
+                      <option value='0x8764eAD14051407D2761FeE6fab8597B07FE803c'>Euler Hermes</option>
                     </select>
+                  </p>
+
+                   <p>
+                    <label for='amount'>Amount</label><br/>
+                    <input type="number" name="amount" id="amount"/>
+                  </p>
+
+                  <p>
+                    <label for='dueDate'>Due Date</label><br/>
+                    <input type="Date" name="dueDate" id="dueDate"/>
                   </p>
                 </div>
                 <input type='submit' name='Submit' value='submit'/>
@@ -196,56 +284,119 @@ class InvoiceCreation extends React.Component{
   }
 }
 
-class PaymentConfirmation extends React.Component{
-  render(){
-    return(
-        <div className="dapp-flex-content">
+class InvoicesList extends React.Component{
 
-        <aside className="dapp-aside">
-
-        </aside>
-
-        <main className="dapp-content">
-          <div className="dapp-container">
-            <h1>Confirm payment of an invoice: (only by one of the 2 concerned)</h1>
-            <div>
-              <form method='post'>
-                <div>
-                  <p>
-                    <label for='yourConfirmation'>Who are you?</label>:
-                    <select name='yourConfirmation' size='1' id='yourConfirmation'>
-                      <option value='Mr White'>Mr White</option>
-                      <option value='Mr Blonde'>Mr Blonde</option>
-                      <option value='Mr Pink'>Mr Pink</option>
-                      <option value='Mr Blue'>Mr Blue</option>
-                    </select>
-                  </p>
-                  <p>
-                    <label for='hisConfirmation'>Who's client are you?</label>:
-                    <select name='hisConfirmation' size='1' id='hisConfirmation'>
-                      <option value='Mr White'>Mr White</option>
-                      <option value='Mr Blonde'>Mr Blonde</option>
-                      <option value='Mr Pink'>Mr Pink</option>
-                      <option value='Mr Blue'>Mr Blue</option>
-                    </select>
-                  </p>
-
-                </div>
-              </form>
-            </div>
-          </div>
-        </main>
-
-        <aside className="dapp-actionbar">
-
-        </aside>
-      </div>
-      );
+  handleUpdate(){
+    /* look for other alerts Ideally would show the status of the different
+       invoices*/
   }
-}
 
-class CheckAndAlert extends React.Component{
+  handleClick(index){
+
+    if (this.props.state.invoiceSelected == index){
+      this.props.state.invoiceSelected = null;
+    }
+    else{
+      this.props.state.invoiceSelected = index;
+    }
+    this.forceUpdate();
+  }
+
+  approveInvoice(index){
+    alert('Invoice Approved');
+  }
+
+  declarePayment(index){
+    alert('Invoice Paid');
+  }
+
+  statusAction(index){
+
+    if (this.props.state.invoiceStatus[index] == "Waiting for Approval")
+        return( <div className="invoiceActionInside" onClick={() => this.approveInvoice(index)}>Approve Invoice</div>);
+
+    if (this.props.state.invoiceStatus[index] == "Late")
+        return( <div className="invoiceActionInside" onClick={() => this.declarePayment(index)}>Declare Payment</div>);
+    
+  }
+
+
   render(){
+    
+    var invoiceList = this.props.state.invoiceId.map(function(Id,index){ 
+      var buyerTmp = buyerTmp = this.props.state.invoiceBuyer[index]; 
+          
+      if (buyerTmp == web3.eth.accounts[0])
+        buyerTmp = "You";
+
+      var sellerTmp = this.props.state.invoiceSeller[index];
+      if (sellerTmp == web3.eth.accounts[0])
+        sellerTmp = "You";      
+
+      var invoiceAction = this.statusAction(index);
+
+     
+
+
+
+      if (this.props.state.invoiceSelected != index){ 
+        return (<div key={index} >
+                   <div className="invoiceSummary" onClick={()=>this.handleClick(index)}>
+                    <div className="content">
+                      <span className="buyer">Buyer : {buyerTmp}</span>
+                      <span className="amount">Amount : {this.props.state.invoiceAmount[index]} {this.props.state.invoiceUnit[index]}</span>
+
+                    </div>
+                    <div className="content">
+                      <span className="seller">Seller : {sellerTmp}</span>
+                      <span className="amount">Due : {this.props.state.invoiceDueDate[index]}</span>
+                    </div>
+                    
+                  </div>
+                  <div className="invoiceAction">
+                    {invoiceAction}
+                  </div>
+
+                  </div>);
+      }
+      else
+        return (<div key={index}>
+                   <div className="invoiceSummary" onClick={()=>this.handleClick(index)}>
+                    <div className="content">
+                      <span className="buyer">Buyer : {buyerTmp}</span>
+                      <span className="amount">Amount : {this.props.state.invoiceAmount[index]} {this.props.state.invoiceUnit[index]}</span>
+
+                    </div>
+                    <div className="content">
+                      <span className="seller">Seller : {sellerTmp}</span>
+                      <span className="amount">Due : {this.props.state.invoiceDueDate[index]}</span>
+                    </div>
+
+                    <div className="content">
+                      <span className="sellerApproved">Seller approved : {this.props.state.invoiceSellerApproved[index]? "Yes" : "No"}</span>
+                      <span className="buyerApproved">Buyer approved: {this.props.state.invoiceBuyerApproved[index]? "Yes" : "No"}</span>
+                    </div>
+
+                    <div className="content">
+                      <span className="sellerApproved">Seller got paid : {this.props.state.invoiceSellerGotPaid[index]? "Yes" : "No"}</span>
+                      <span className="buyerApproved">Buyer paid: {this.props.state.invoiceBuyerPaid[index]? "Yes" : "No"}</span>
+                    </div>
+
+                    <div className="content">
+                      <span className="status">Status : {this.props.state.invoiceStatus[index]}</span>
+                      
+                    </div>
+                    
+                  </div>
+                  <div className="invoiceAction">
+                    {invoiceAction}
+                  </div>
+                  </div>);
+      
+    },this);
+
+
+
     return(
       <div className="dapp-flex-content">
 
@@ -255,31 +406,9 @@ class CheckAndAlert extends React.Component{
 
         <main className="dapp-content">
           <div className="dapp-container">
-            <h1>Check if invoices are paid, and alert the relevant people<em>(for the demo only)</em></h1>
-            <div>
-              <form method='post' onsubmit='checkFunction()'>
-                <div>
-                  <p>
-                    <label for='whichP'>What client do you wish to check?</label>:<br/>
-                    <select name='whichP' size='1' id='whichP'>
-                      <option value='Mr White' type='string'>Mr White</option>
-                      <option value='Mr Blonde' type='string'>Mr Blonde</option>
-                      <option value='Mr Pink' type='string'>Mr Pink</option>
-                      <option value='Mr Blue' type='string'>Mr Blue</option>
-                    </select>
-                  </p>
-                  <p>
-                    <label for='whichR'>Which invoice?</label>:<br/>
-                    <select name='whichR' size='1' id='whichR'>
-                      <option value='0' type='number'>first</option>
-                      <option value='1' type='number'>second</option>
-                      <option value='2' type='number'>third</option>
-                    </select>
-                  </p>
-                </div>
-                <br/>
-                <input type='submit' name='Check' value='query'/>
-              </form>
+            <h1>Your invoices<em></em></h1>
+              <div id="wrap">
+                {invoiceList}
             </div>
 
           </div>
@@ -325,5 +454,8 @@ class Error extends React.Component{
 
 
 
-ReactDOM.render(<App menudata={MENUDATA}/>,
+ReactDOM.render(<App menudata={MENUDATA} accountsName = {ACCOUNTSNAME}/>,
  document.getElementById('content') );
+
+
+
