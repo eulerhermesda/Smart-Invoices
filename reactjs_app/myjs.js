@@ -55,7 +55,7 @@ class App extends React.Component{
 
   render(){
     var tries = 0;
-    while (web3.eth.accounts[0] == null && tries < 100){tries++;}
+    while (web3.eth.accounts[0] == null && tries < 100){sleep(100);tries++;}
     if (web3.eth.accounts[0] == null){
       return (
         <div>
@@ -147,7 +147,7 @@ class Page extends React.Component{
         Status:'',
         SellerApproved: 1,
         BuyerApproved:1,
-        BuyerPaid : 1,
+        BuyerPaid : 0,
         SellerGotPaid: 0
       },
       {
@@ -158,7 +158,7 @@ class Page extends React.Component{
         Unit : '£',
         DueDate:'15/06/2017',
         Status:'',
-        SellerApproved: 0,
+        SellerApproved: 1,
         BuyerApproved:0,
         BuyerPaid : 1,
         SellerGotPaid: 0
@@ -371,11 +371,21 @@ class InvoicesList extends React.Component{
 
   statusAction(index){
 
-    if (this.props.state.invoices[index].Status == "Waiting for Approval")
-        return( <div className="invoiceActionInside" onClick={() => this.approveInvoice(index)}>Approve Invoice</div>);
+    if (this.props.state.invoices[index].Status == "Waiting for Approval")  
+        if ((this.props.state.invoices[index].Buyer.toLowerCase() == web3.eth.accounts[0].toLowerCase() 
+            && !this.props.state.invoices[index].BuyerApproved)
+            ||((this.props.state.invoices[index].Seller.toLowerCase() == web3.eth.accounts[0].toLowerCase() )
+              && !this.props.state.invoices[index].SellerApproved))
+
+          return( <div className="invoiceActionInside" onClick={() => this.approveInvoice(index)}>Approve Invoice</div>);
 
     if (this.props.state.invoices[index].Status == "Late")
+      if ((this.props.state.invoices[index].Seller.toLowerCase() == web3.eth.accounts[0].toLowerCase())
+        || ((this.props.state.invoices[index].Buyer.toLowerCase() == web3.eth.accounts[0].toLowerCase() 
+            && !this.props.state.invoices[index].BuyerPaid)))
         return( <div className="invoiceActionInside" onClick={() => this.declarePayment(index)}>Declare Payment</div>);
+
+    
     
   }
 
@@ -383,9 +393,9 @@ class InvoicesList extends React.Component{
   render(){
     
     var invoiceList = this.props.state.invoices.map(function(Id,index){ 
-      var buyerTmp = buyerTmp = this.props.state.invoices[index].Buyer; 
+      var buyerTmp = this.props.state.invoices[index].Buyer; 
           
-      if (buyerTmp.toLowerCase() == web3.eth.accounts[0]).toLowerCase())
+      if (buyerTmp.toLowerCase() == web3.eth.accounts[0].toLowerCase())
         buyerTmp = "You";
 
       var sellerTmp = this.props.state.invoices[index].Seller;
