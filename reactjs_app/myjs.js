@@ -135,7 +135,8 @@ class Page extends React.Component{
         SellerApproved: 1,
         BuyerApproved:0,
         BuyerPaid : 0,
-        SellerGotPaid: 0
+        SellerGotPaid: 0,
+        ServiceAttached : [] // for the TCI
       },
       {
         Id : 1,
@@ -148,7 +149,8 @@ class Page extends React.Component{
         SellerApproved: 1,
         BuyerApproved:1,
         BuyerPaid : 0,
-        SellerGotPaid: 0
+        SellerGotPaid: 0,
+        ServiceAttached : [] // for the TCI
       },
       {
         Id : 2,
@@ -161,7 +163,8 @@ class Page extends React.Component{
         SellerApproved: 1,
         BuyerApproved:0,
         BuyerPaid : 1,
-        SellerGotPaid: 0
+        SellerGotPaid: 0,
+        ServiceAttached : [] // for the TCI
       },
       {
         Id : 3,
@@ -174,7 +177,8 @@ class Page extends React.Component{
         SellerApproved: 1,
         BuyerApproved:1,
         BuyerPaid : 1,
-        SellerGotPaid: 1
+        SellerGotPaid: 1,
+        ServiceAttached : [] // for the TCI
       },
       {
         Id : 4,
@@ -187,7 +191,8 @@ class Page extends React.Component{
         SellerApproved: 1,
         BuyerApproved:1,
         BuyerPaid : 0,
-        SellerGotPaid: 0
+        SellerGotPaid: 0,
+        ServiceAttached : [] // for the TCI
       },
 
       ],
@@ -369,7 +374,17 @@ class InvoicesList extends React.Component{
     alert('Invoice Paid');
   }
 
+  subscribeTCI(index){
+    alert('Subscribing to TCI');
+  }
+
+  declareClaim(index){
+    alert('Declaring a claim');
+  }
+
   statusAction(index){
+
+    var waitingForApproval = this.props.state.invoices[index].Status == "Waiting for Approval";
 
     if (this.props.state.invoices[index].Status == "Waiting for Approval")  
         if ((this.props.state.invoices[index].Buyer.toLowerCase() == web3.eth.accounts[0].toLowerCase() 
@@ -389,6 +404,19 @@ class InvoicesList extends React.Component{
     
   }
 
+  serviceAction(index){
+    if (this.props.state.invoices[index].ServiceAttached == []){
+      return(<div className="serviceActionInside" onClick={() => this.subscribeTCI(index)}>Subscribe to a TCI</div>);
+    }
+    else if (this.props.state.invoices[index].Status == "Late"){
+      return(<div className="serviceActionInside" onClick={() => this.declareClaim(index)}>Declare a claim</div>);
+    }
+    else
+      return(<div className="serviceActionInsideInactive" >Insurance registered</div>);
+    
+
+  }
+
 
   render(){
     
@@ -403,6 +431,7 @@ class InvoicesList extends React.Component{
         sellerTmp = "You";      
 
       var invoiceAction = this.statusAction(index);
+      var serviceAction = this.serviceAction(index);
 
       if (buyerTmp == "You" || sellerTmp == "You"){
       if (this.props.state.invoiceSelected != index){ 
@@ -422,6 +451,7 @@ class InvoicesList extends React.Component{
                   <div className="invoiceAction">
                     {invoiceAction}
                   </div>
+                  
 
                   </div>);
       }
@@ -456,6 +486,9 @@ class InvoicesList extends React.Component{
                   </div>
                   <div className="invoiceAction">
                     {invoiceAction}
+                  </div>
+                  <div className="serviceAction">
+                    {serviceAction}
                   </div>
                   </div>);
     }
