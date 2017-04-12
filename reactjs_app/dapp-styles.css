@@ -386,7 +386,9 @@
 .dapp-content,
 .dapp-footer {
   position: relative;
-  padding: 12.26666667px 32px;
+  padding-top: 13px;
+  padding-left: 32px;
+  padding-bottom: 13px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;

@@ -111,25 +111,74 @@ class Page extends React.Component{
   constructor(){
     super();
     this.state = {
-      invoiceId : [0,1,2,3,4],
-      invoiceBuyer : ['0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
-                      '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
-                      '0x8764eAD14051407D2761FeE6fab8597B07FE803c',
-                      '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
-                      '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1'],
-      invoiceSeller: ['0x76d499C529cc06323EA0c5d5edcf9B11c02597cB',
-                      '0x8764eAD14051407D2761FeE6fab8597B07FE803c',
-                      '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
-                      '0x8764eAD14051407D2761FeE6fab8597B07FE803c',
-                      '0x76d499C529cc06323EA0c5d5edcf9B11c02597cB'],
-      invoiceAmount : [50,100,150,200,300],
-      invoiceUnit : ["€", "$", "£","€","€"],
-      invoiceDueDate: ['13/04/2017', '09/04/2017','15/06/2017','15/05/2017','17/06/2017'],
-      invoiceStatus : ['', '','','',''],
-      invoiceSellerApproved : [1,1,0,1,1],
-      invoiceBuyerApproved : [0,1,0,1,1],
-      invoiceBuyerPaid : [0,1,1,1,0],
-      invoiceSellerGotPaid:[0,0,0,1,0],
+      invoices : [{
+        Id : 0,
+        Buyer: '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
+        Seller:'0x76d499c529cc06323ea0c5d5edcf9b11c02597cb',
+        Amount : 50,
+        Unit : '€',
+        DueDate:'13/04/2017',
+        Status:'',
+        SellerApproved: 1,
+        BuyerApproved:0,
+        BuyerPaid : 0,
+        SellerGotPaid: 0
+      },
+      {
+        Id : 1,
+        Buyer: '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
+        Seller:'0x8764eAD14051407D2761FeE6fab8597B07FE803c',
+        Amount : 100,
+        Unit : '$',
+        DueDate:'09/04/2017',
+        Status:'',
+        SellerApproved: 1,
+        BuyerApproved:1,
+        BuyerPaid : 1,
+        SellerGotPaid: 0
+      },
+      {
+        Id : 2,
+        Buyer: '0x8764eAD14051407D2761FeE6fab8597B07FE803c',
+        Seller:'0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
+        Amount : 150,
+        Unit : '£',
+        DueDate:'15/06/2017',
+        Status:'',
+        SellerApproved: 0,
+        BuyerApproved:0,
+        BuyerPaid : 1,
+        SellerGotPaid: 0
+      },
+      {
+        Id : 3,
+        Buyer: '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
+        Seller:'0x8764eAD14051407D2761FeE6fab8597B07FE803c',
+        Amount : 200,
+        Unit : '€',
+        DueDate:'15/05/2017',
+        Status:'',
+        SellerApproved: 1,
+        BuyerApproved:1,
+        BuyerPaid : 1,
+        SellerGotPaid: 1
+      },
+      {
+        Id : 4,
+        Buyer: '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
+        Seller:'0x76d499c529cc06323ea0c5d5edcf9b11c02597cb',
+        Amount : 300,
+        Unit : '€',
+        DueDate:'17/06/2017',
+        Status:'',
+        SellerApproved: 1,
+        BuyerApproved:1,
+        BuyerPaid : 0,
+        SellerGotPaid: 0
+      },
+
+      ],
+      
       invoiceSelected: null,     
 
     };
@@ -138,15 +187,15 @@ class Page extends React.Component{
   render(){
     // Here we determine the status of the invoice
     
-    this.state.invoiceId.map(function(Id,index){
+    this.state.invoices.map(function(Id,index){
       var status = null;
-      var sBuyerApproved = this.state.invoiceBuyerApproved[index];
-      var sBuyerPaid = this.state.invoiceBuyerPaid[index];
-      var sSellerApproved = this.state.invoiceSellerApproved[index];
-      var sSellerGotPaid = this.state.invoiceSellerGotPaid[index];
+      var sBuyerApproved = this.state.invoices[index].BuyerApproved;
+      var sBuyerPaid = this.state.invoices[index].BuyerPaid;
+      var sSellerApproved = this.state.invoices[index].SellerApproved;
+      var sSellerGotPaid = this.state.invoices[index].SellerGotPaid;
 
       
-      var parts =this.state.invoiceDueDate[index].split('/');
+      var parts =this.state.invoices[index].DueDate.split('/');
       var sInvoiceDueDate = new Date(parts[2],parts[1]-1,parts[0]); 
       
 
@@ -171,13 +220,10 @@ class Page extends React.Component{
         status = "Paid";
       }
 
-      this.state.invoiceStatus[index]=status;
+      this.state.invoices[index].Status=status;
       
     },this
     );
-
-
-
 
 
 
@@ -312,10 +358,10 @@ class InvoicesList extends React.Component{
 
   statusAction(index){
 
-    if (this.props.state.invoiceStatus[index] == "Waiting for Approval")
+    if (this.props.state.invoices[index].Status == "Waiting for Approval")
         return( <div className="invoiceActionInside" onClick={() => this.approveInvoice(index)}>Approve Invoice</div>);
 
-    if (this.props.state.invoiceStatus[index] == "Late")
+    if (this.props.state.invoices[index].Status == "Late")
         return( <div className="invoiceActionInside" onClick={() => this.declarePayment(index)}>Declare Payment</div>);
     
   }
@@ -323,33 +369,30 @@ class InvoicesList extends React.Component{
 
   render(){
     
-    var invoiceList = this.props.state.invoiceId.map(function(Id,index){ 
-      var buyerTmp = buyerTmp = this.props.state.invoiceBuyer[index]; 
+    var invoiceList = this.props.state.invoices.map(function(Id,index){ 
+      var buyerTmp = buyerTmp = this.props.state.invoices[index].Buyer; 
           
       if (buyerTmp == web3.eth.accounts[0])
         buyerTmp = "You";
 
-      var sellerTmp = this.props.state.invoiceSeller[index];
+      var sellerTmp = this.props.state.invoices[index].Seller;
       if (sellerTmp == web3.eth.accounts[0])
         sellerTmp = "You";      
 
       var invoiceAction = this.statusAction(index);
 
-     
-
-
-
+      if (buyerTmp == "You" || sellerTmp == "You"){
       if (this.props.state.invoiceSelected != index){ 
         return (<div key={index} >
                    <div className="invoiceSummary" onClick={()=>this.handleClick(index)}>
                     <div className="content">
                       <span className="buyer">Buyer : {buyerTmp}</span>
-                      <span className="amount">Amount : {this.props.state.invoiceAmount[index]} {this.props.state.invoiceUnit[index]}</span>
+                      <span className="amount">Amount : {this.props.state.invoices[index].Amount} {this.props.state.invoices[index].Unit}</span>
 
                     </div>
                     <div className="content">
                       <span className="seller">Seller : {sellerTmp}</span>
-                      <span className="amount">Due : {this.props.state.invoiceDueDate[index]}</span>
+                      <span className="amount">Due : {this.props.state.invoices[index].DueDate}</span>
                     </div>
                     
                   </div>
@@ -364,26 +407,26 @@ class InvoicesList extends React.Component{
                    <div className="invoiceSummary" onClick={()=>this.handleClick(index)}>
                     <div className="content">
                       <span className="buyer">Buyer : {buyerTmp}</span>
-                      <span className="amount">Amount : {this.props.state.invoiceAmount[index]} {this.props.state.invoiceUnit[index]}</span>
+                      <span className="amount">Amount : {this.props.state.invoices[index].Amount} {this.props.state.invoices[index].Unit}</span>
 
                     </div>
                     <div className="content">
                       <span className="seller">Seller : {sellerTmp}</span>
-                      <span className="amount">Due : {this.props.state.invoiceDueDate[index]}</span>
+                      <span className="amount">Due : {this.props.state.invoices[index].DueDate}</span>
                     </div>
 
                     <div className="content">
-                      <span className="sellerApproved">Seller approved : {this.props.state.invoiceSellerApproved[index]? "Yes" : "No"}</span>
-                      <span className="buyerApproved">Buyer approved: {this.props.state.invoiceBuyerApproved[index]? "Yes" : "No"}</span>
+                      <span className="sellerApproved">Seller approved : {this.props.state.invoices[index].SellerApproved? "Yes" : "No"}</span>
+                      <span className="buyerApproved">Buyer approved: {this.props.state.invoices[index].BuyerApproved? "Yes" : "No"}</span>
                     </div>
 
                     <div className="content">
-                      <span className="sellerApproved">Seller got paid : {this.props.state.invoiceSellerGotPaid[index]? "Yes" : "No"}</span>
-                      <span className="buyerApproved">Buyer paid: {this.props.state.invoiceBuyerPaid[index]? "Yes" : "No"}</span>
+                      <span className="sellerApproved">Seller got paid : {this.props.state.invoices[index].SellerGotPaid? "Yes" : "No"}</span>
+                      <span className="buyerApproved">Buyer paid: {this.props.state.invoices[index].BuyerPaid? "Yes" : "No"}</span>
                     </div>
 
                     <div className="content">
-                      <span className="status">Status : {this.props.state.invoiceStatus[index]}</span>
+                      <span className="status">Status : {this.props.state.invoices[index].Status}</span>
                       
                     </div>
                     
@@ -392,6 +435,7 @@ class InvoicesList extends React.Component{
                     {invoiceAction}
                   </div>
                   </div>);
+    }
       
     },this);
 
