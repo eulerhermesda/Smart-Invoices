@@ -31,6 +31,7 @@ class App extends React.Component{
       meAddress : null,
       himAddress : null,
       alert :[{}],
+      
     };
   }
 
@@ -53,6 +54,18 @@ class App extends React.Component{
   }
 
   render(){
+    var tries = 0;
+    while (web3.eth.accounts[0] == null && tries < 100){tries++;}
+    if (web3.eth.accounts[0] == null){
+      return (
+        <div>
+          <Menu
+          entries = {this.props.menudata.nameList} onClick={(i)=>this.handleMenuClick(i)}
+          accountsName = {this.props.accountsName}/>   
+          <span> Your web3 provider didn't return an account in time, are you sure you have one?</span>
+        </div>
+        );
+    }
     return(
       <div>
         <Menu
@@ -372,11 +385,11 @@ class InvoicesList extends React.Component{
     var invoiceList = this.props.state.invoices.map(function(Id,index){ 
       var buyerTmp = buyerTmp = this.props.state.invoices[index].Buyer; 
           
-      if (buyerTmp == web3.eth.accounts[0])
+      if (buyerTmp.toLowerCase() == web3.eth.accounts[0]).toLowerCase())
         buyerTmp = "You";
 
       var sellerTmp = this.props.state.invoices[index].Seller;
-      if (sellerTmp == web3.eth.accounts[0])
+      if (sellerTmp.toLowerCase() == web3.eth.accounts[0].toLowerCase())
         sellerTmp = "You";      
 
       var invoiceAction = this.statusAction(index);
