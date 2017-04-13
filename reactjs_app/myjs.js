@@ -13,19 +13,21 @@ if (typeof web3 !== 'undefined') {
 var MENUDATA = {
   nameList:['Invoices', 'New invoice']
 };
-
-var ACCOUNTSNAME = {
-  '0x76d499C529cc06323EA0c5d5edcf9B11c02597cB':'Seller',
-  '0xC30F6af2c92eFd81DC27D30ccD573B0dA675D3b1':'Buyer',
-  '0x8764eAD14051407D2761FeE6fab8597B07FE803c': 'Euler Hermes'
-}
+var ACCOUNTSNAME = [
+  {address : '0x76d499C529cc06323EA0c5d5edcf9B11c02597cB',
+   name : 'Air France'},  
+  {address : '0xC30F6af2c92eFd81DC27D30ccD573B0dA675D3b1',
+   name : 'Peugeot'},
+  {address : '0x8764eAD14051407D2761FeE6fab8597B07FE803c',
+   name : 'Seller'},
+];
 
 // The full page
 class App extends React.Component{
   constructor(){
     super();
     this.state = {
-      currentPage: 0,
+      currentPage: 1,
       meName : null,
       himName : null,
       meAddress : null,
@@ -55,8 +57,8 @@ class App extends React.Component{
 
   render(){
     var tries = 0;
-    while (web3.eth.accounts[0] == null && tries < 100){sleep(100);tries++;}
-    if (web3.eth.accounts[0] == null){
+    while (web3.eth.accounts[0] == '' && tries < 100){sleep(100);tries++;}
+    if (web3.eth.accounts[0] == ''){
       return (
         <div>
           <Menu
@@ -124,6 +126,7 @@ class Page extends React.Component{
   constructor(){
     super();
     this.state = {
+
       invoices : [{
         Id : 0,
         Buyer: '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
@@ -162,7 +165,7 @@ class Page extends React.Component{
         Status:'',
         SellerApproved: 1,
         BuyerApproved:0,
-        BuyerPaid : 1,
+        BuyerPaid : 0,
         SellerGotPaid: 0,
         ServiceAttached : [] // for the TCI
       },
@@ -176,7 +179,7 @@ class Page extends React.Component{
         Status:'',
         SellerApproved: 1,
         BuyerApproved:1,
-        BuyerPaid : 1,
+        BuyerPaid : 0,
         SellerGotPaid: 1,
         ServiceAttached : [] // for the TCI
       },
@@ -230,12 +233,17 @@ class Page extends React.Component{
       }
 
       // Invoice approved but payment late
-      else if ( sInvoiceDueDate < date && (!sBuyerPaid || !sSellerGotPaid)){
+      else if ( sInvoiceDueDate < date && (!sSellerGotPaid)){
         status = "Late";
       }
 
-      else if (sSellerGotPaid && sBuyerPaid){
+      else if (sSellerGotPaid){
+        this.state.invoices[index].BuyerPaid = 1;
         status = "Paid";
+      }
+
+      else{
+        status = 'Awaiting Payment';
       }
 
       this.state.invoices[index].Status=status;
@@ -279,7 +287,55 @@ class Page extends React.Component{
 // From now on those classes represent the different pages.
 
 class InvoiceCreation extends React.Component{
+ 
+  createInvoice(){
+
+    var q = new Date();
+    var m = q.getMonth();
+    var d = q.getDate();
+    var y = q.getFullYear();
+    var date = new Date(y,m,d);
+    
+    var seller = document.getElementById('seller');
+    var buyer = document.getElementById('buyer');
+    var amount = document.getElementById('amount');
+    var dueDate = document.getElementById('dueDate');
+    var unit = document.getElementById('unit');
+
+    var invoice = {
+      Id : 0,
+      Buyer: buyer.value,
+      Seller:seller.value,
+      amount : amount.value,
+      currency : unit.value,
+      DueDate:dueDate.value,
+      IssueDate : date,
+      Status:'',
+      SellerApproved: 1,
+      BuyerApproved:0,
+      BuyerPaid : 0,
+      SellerGotPaid: 0,
+      ServiceAttached : [] // for the TCI
+    }var invoice = {
+   string amount;
+   string currency;
+   string dueAt;
+   string issueAt;
+   address owner;
+   address counterpart;
+   bool sellerHasValidate;
+   bool buyerHasValidate;
+   bool sellerGotPaid;
+   bool HasTCI;
+   uint index;
+ }
+
+  }
+
   render(){
+    var buyerList = ACCOUNTSNAME.map(function(name,index){
+      return(<option key={index} value={ACCOUNTSNAME[index].address}>{ACCOUNTSNAME[index].name}</option>);
+    },this);
     return(<div className="dapp-flex-content">
 
         <aside className="dapp-aside">
@@ -297,9 +353,7 @@ class InvoiceCreation extends React.Component{
                     <label for='seller'>Seller</label><br/>
 
                     <select name='seller' size='1' id='seller'>
-                       <option value='0x76d499C529cc06323EA0c5d5edcf9B11c02597cB'>Seller</option>
-                      <option value='0xC30F6af2c92eFd81DC27D30ccD573B0dA675D3b1'>Buyer</option>
-                      <option value='0x8764eAD14051407D2761FeE6fab8597B07FE803c'>Euler Hermes</option>
+                       {buyerList}
                     </select>
                   </p>
 
@@ -308,15 +362,19 @@ class InvoiceCreation extends React.Component{
                     <label for='buyer'>Buyer</label><br/>
 
                     <select name='buyer' size='1' id='buyer'>
-                       <option value='0x76d499C529cc06323EA0c5d5edcf9B11c02597cB'>Seller</option>
-                      <option value='0xC30F6af2c92eFd81DC27D30ccD573B0dA675D3b1'>Buyer</option>
-                      <option value='0x8764eAD14051407D2761FeE6fab8597B07FE803c'>Euler Hermes</option>
+                      {buyerList}
                     </select>
                   </p>
 
                    <p>
                     <label for='amount'>Amount</label><br/>
-                    <input type="number" name="amount" id="amount"/>
+                    <input type="number" name="amount"  className= "amount" id="amount"/>
+                  
+                    <select name='buyer' className="unit" size='1' id='buyer'>
+                      <option value = "eur"> € </option>
+                      <option value = "dol"> $ </option>
+                      <option value = "pou"> £ </option>
+                    </select>
                   </p>
 
                   <p>
@@ -324,19 +382,10 @@ class InvoiceCreation extends React.Component{
                     <input type="Date" name="dueDate" id="dueDate"/>
                   </p>
                 </div>
-                <input type='submit' name='Submit' value='submit'/>
+                <input type='submit' name='Submit' value='Submit' onClick={()=>this.createInvoice()}/>
               </form>
             </div>
           </div>
-          <div>
-            <form method='post'>
-              <p>
-                <label for='message'>Alerts</label><br/>
-                <textarea name='message' id='message' rows='5'></textarea>
-              </p>
-            </form>
-          </div>
-
 
         </main>
 
@@ -382,38 +431,73 @@ class InvoicesList extends React.Component{
     alert('Declaring a claim');
   }
 
+  archive(index){
+    alert('Invoice Archived');
+  }
+
   statusAction(index){
 
+    // Invoice statuses
+
     var waitingForApproval = this.props.state.invoices[index].Status == "Waiting for Approval";
+    var late = this.props.state.invoices[index].Status == 'Late'; 
+    var paid = this.props.state.invoices[index].Status == 'Paid';
+    var awaitingPayment = this.props.state.invoices[index].Status == 'Awaiting Payment';
 
-    if (this.props.state.invoices[index].Status == "Waiting for Approval")  
-        if ((this.props.state.invoices[index].Buyer.toLowerCase() == web3.eth.accounts[0].toLowerCase() 
-            && !this.props.state.invoices[index].BuyerApproved)
-            ||((this.props.state.invoices[index].Seller.toLowerCase() == web3.eth.accounts[0].toLowerCase() )
-              && !this.props.state.invoices[index].SellerApproved))
+    var iAmBuyer = this.props.state.invoices[index].Buyer.toLowerCase() == web3.eth.accounts[0].toLowerCase();
+    var buyerApproved = this.props.state.invoices[index].BuyerApproved;
+    var iAmSeller = this.props.state.invoices[index].Seller.toLowerCase() == web3.eth.accounts[0].toLowerCase();
+    var sellerApproved = this.props.state.invoices[index].SellerApproved;
+    var buyerPaid = this.props.state.invoices[index].BuyerPaid;
+    var sellerGotPaid = this.props.state.invoices[index].SellerGotPaid;
 
+
+    if (waitingForApproval){
+        if ((iAmBuyer && !buyerApproved) ||( iAmSeller && !sellerApproved))
           return( <div className="invoiceActionInside" onClick={() => this.approveInvoice(index)}>Approve Invoice</div>);
 
-    if (this.props.state.invoices[index].Status == "Late")
-      if ((this.props.state.invoices[index].Seller.toLowerCase() == web3.eth.accounts[0].toLowerCase())
-        || ((this.props.state.invoices[index].Buyer.toLowerCase() == web3.eth.accounts[0].toLowerCase() 
-            && !this.props.state.invoices[index].BuyerPaid)))
-        return( <div className="invoiceActionInside" onClick={() => this.declarePayment(index)}>Declare Payment</div>);
+        if(iAmBuyer && buyerApproved)
+          return(<div className="invoiceActionInsideInactive" >Waiting Seller Approval</div>);
 
-    
-    
+        if(iAmSeller && sellerApproved)
+          return(<div className="invoiceActionInsideInactive" >Waiting Buyer Approval</div>);
+      }
+    if (late){
+      if ((iAmSeller && !sellerGotPaid))      
+        return( <div className="invoiceActionInside" onClick={() => this.declarePayment(index)}>Declare Payment</div>);
+      if ((iAmBuyer && !sellerGotPaid))
+        return( <div className="invoiceActionInsideInactive" >Waiting for seller to get paid</div>);
+    }
+
+    if (paid){
+        return( <div className="invoiceActionInside" onClick={() => this.archive(index)}>Archive</div>);
+    }
+
+    if (awaitingPayment){
+      if (iAmSeller && !sellerGotPaid)
+        return( <div className="invoiceActionInside" onClick={() => this.declarePayment(index)}>Declare Payment</div>);
+      if ((iAmBuyer && !sellerGotPaid)){
+        console.log('iAmBuyer')
+        return( <div className="invoiceActionInsideInactive" >Waiting for seller to get paid</div>);
+      }
+    }
+
+
+
   }
 
   serviceAction(index){
-    if (this.props.state.invoices[index].ServiceAttached == []){
-      return(<div className="serviceActionInside" onClick={() => this.subscribeTCI(index)}>Subscribe to a TCI</div>);
+    var iAmSeller = this.props.state.invoices[index].Seller.toLowerCase() == web3.eth.accounts[0].toLowerCase();
+    if (iAmSeller){
+      if (this.props.state.invoices[index].ServiceAttached == ''){
+        return(<div className="serviceActionInside" onClick={() => this.subscribeTCI(index)}>Subscribe to a TCI</div>);
+      }
+      else if (this.props.state.invoices[index].Status == "Late"){
+        return(<div className="serviceActionInside" onClick={() => this.declareClaim(index)}>Declare a claim</div>);
+      }
+      else
+        return(<div className="serviceActionInsideInactive" >Insurance registered</div>);
     }
-    else if (this.props.state.invoices[index].Status == "Late"){
-      return(<div className="serviceActionInside" onClick={() => this.declareClaim(index)}>Declare a claim</div>);
-    }
-    else
-      return(<div className="serviceActionInsideInactive" >Insurance registered</div>);
-    
 
   }
 
@@ -552,10 +636,5 @@ class Error extends React.Component{
 }
 
 
-
-
 ReactDOM.render(<App menudata={MENUDATA} accountsName = {ACCOUNTSNAME}/>,
  document.getElementById('content') );
-
-
-
