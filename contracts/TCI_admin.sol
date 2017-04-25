@@ -186,8 +186,9 @@ contract TCI_admin {
 	}*/
 	
 //function used for ONE client, ONE invoice 
-//used to send a message readable why EVERYONE
-//I will need to implement a crypting system for the demo
+//used to send a message readable by EVERYONE
+//I will need to implement a ciphering system for the demo
+// We can use the public address to cipher the message
 	function checkFunction(bytes32 client, uint r)   {
 		bytes32  _sir = invoices[names[client]][r].nameFrom;
 		bytes32 _dest = invoices[names[client]][r].nameTo;
