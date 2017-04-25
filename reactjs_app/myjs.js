@@ -18,6 +18,7 @@ if (typeof web3 !== 'undefined') {
 var MENUDATA = {
   nameList:['Invoices', 'New invoice']  //Insérer les noms des nouvelles pages ici
 };
+<<<<<<< HEAD
 
 var ACCOUNTSNAME = [
   {
@@ -35,6 +36,15 @@ var ACCOUNTSNAME = [
     id : "2df8ba88-4eb9-4151-aa41-64f10932e650",
     name : "Euler Hermes France"
   }
+=======
+var ACCOUNTSNAME = [
+  {address : '0x76d499C529cc06323EA0c5d5edcf9B11c02597cB',
+   name : 'Air France'},  
+  {address : '0xC30F6af2c92eFd81DC27D30ccD573B0dA675D3b1',
+   name : 'Peugeot'},
+  {address : '0x8764eAD14051407D2761FeE6fab8597B07FE803c',
+   name : 'Seller'},
+>>>>>>> 99b91d91112137b10637729878ddf2e816e64077
 ];
 
 // The full page
@@ -133,6 +143,85 @@ class Menu extends React.Component{
 class Page extends React.Component{
   constructor(){
     super();
+<<<<<<< HEAD
+=======
+    this.state = {
+
+      invoices : [{
+        Id : 0,
+        Buyer: '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
+        Seller:'0x76d499c529cc06323ea0c5d5edcf9b11c02597cb',
+        Amount : 50,
+        Unit : '€',
+        DueDate:'13/04/2017',
+        Status:'',
+        SellerApproved: 1,
+        BuyerApproved:0,
+        BuyerPaid : 0,
+        SellerGotPaid: 0,
+        ServiceAttached : [] // for the TCI
+      },
+      {
+        Id : 1,
+        Buyer: '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
+        Seller:'0x8764eAD14051407D2761FeE6fab8597B07FE803c',
+        Amount : 100,
+        Unit : '$',
+        DueDate:'09/04/2017',
+        Status:'',
+        SellerApproved: 1,
+        BuyerApproved:1,
+        BuyerPaid : 0,
+        SellerGotPaid: 0,
+        ServiceAttached : [] // for the TCI
+      },
+      {
+        Id : 2,
+        Buyer: '0x8764eAD14051407D2761FeE6fab8597B07FE803c',
+        Seller:'0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
+        Amount : 150,
+        Unit : '£',
+        DueDate:'15/06/2017',
+        Status:'',
+        SellerApproved: 1,
+        BuyerApproved:0,
+        BuyerPaid : 0,
+        SellerGotPaid: 0,
+        ServiceAttached : [] // for the TCI
+      },
+      {
+        Id : 3,
+        Buyer: '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
+        Seller:'0x8764eAD14051407D2761FeE6fab8597B07FE803c',
+        Amount : 200,
+        Unit : '€',
+        DueDate:'15/05/2017',
+        Status:'',
+        SellerApproved: 1,
+        BuyerApproved:1,
+        BuyerPaid : 0,
+        SellerGotPaid: 1,
+        ServiceAttached : [] // for the TCI
+      },
+      {
+        Id : 4,
+        Buyer: '0xc30f6af2c92efd81dc27d30ccd573b0da675d3b1',
+        Seller:'0x76d499c529cc06323ea0c5d5edcf9b11c02597cb',
+        Amount : 300,
+        Unit : '€',
+        DueDate:'17/06/2017',
+        Status:'',
+        SellerApproved: 1,
+        BuyerApproved:1,
+        BuyerPaid : 0,
+        SellerGotPaid: 0,
+        ServiceAttached : [] // for the TCI
+      },
+
+      ],
+      
+      invoiceSelected: null,     
+>>>>>>> 99b91d91112137b10637729878ddf2e816e64077
 
     this.state = {
       invoices : null,
@@ -144,12 +233,60 @@ class Page extends React.Component{
   }
 
   render(){
+<<<<<<< HEAD
     console.log("before if : " + this.state.passed);
     if(!this.state.passed){
       getInvoices(web3.eth.accounts[0], this);
       console.log("Je suis entré dans le if");
     }
     this.state.passed = false;
+=======
+    // Here we determine the status of the invoice
+    
+    this.state.invoices.map(function(Id,index){
+      var status = null;
+      var sBuyerApproved = this.state.invoices[index].BuyerApproved;
+      var sBuyerPaid = this.state.invoices[index].BuyerPaid;
+      var sSellerApproved = this.state.invoices[index].SellerApproved;
+      var sSellerGotPaid = this.state.invoices[index].SellerGotPaid;
+
+      
+      var parts =this.state.invoices[index].DueDate.split('/');
+      var sInvoiceDueDate = new Date(parts[2],parts[1]-1,parts[0]); 
+      
+
+      // Today's date
+      var q = new Date();
+      var m = q.getMonth();
+      var d = q.getDate();
+      var y = q.getFullYear();
+      var date = new Date(y,m,d);
+      
+      // Invoice not approved if both parties didn't approve it. Going nowhere without that
+      if (!sBuyerApproved || !sSellerApproved){
+        status = "Waiting for Approval";
+      }
+
+      // Invoice approved but payment late
+      else if ( sInvoiceDueDate < date && (!sSellerGotPaid)){
+        status = "Late";
+      }
+
+      else if (sSellerGotPaid){
+        this.state.invoices[index].BuyerPaid = 1;
+        status = "Paid";
+      }
+
+      else{
+        status = 'Awaiting Payment';
+      }
+
+      this.state.invoices[index].Status=status;
+      
+    },this
+    );
+
+>>>>>>> 99b91d91112137b10637729878ddf2e816e64077
 
     // Here we determine the status of the invoice
     console.log("Invoices: " + this.state.invoices);
@@ -228,6 +365,7 @@ class Page extends React.Component{
 // From now on those classes represent the different pages.
 
 class InvoiceCreation extends React.Component{
+<<<<<<< HEAD
 
   createInvoice(){
     //The owner is seller or not
@@ -246,19 +384,30 @@ class InvoiceCreation extends React.Component{
       buyerAddress = ACCOUNTSNAME[indexOwner].address;
       sellerHasValidate_ = 0;
     }
+=======
+ 
+  createInvoice(){
+>>>>>>> 99b91d91112137b10637729878ddf2e816e64077
 
     var q = new Date();
     var m = q.getMonth();
     var d = q.getDate();
     var y = q.getFullYear();
     var date = new Date(y,m,d);
+<<<<<<< HEAD
 
+=======
+    
+    var seller = document.getElementById('seller');
+    var buyer = document.getElementById('buyer');
+>>>>>>> 99b91d91112137b10637729878ddf2e816e64077
     var amount = document.getElementById('amount');
     var dueDate = document.getElementById('dueDate');
     var unit = document.getElementById('unit');
 
     var invoice = {
       Id : 0,
+<<<<<<< HEAD
       buyerAddress: buyerAddress,
       sellerAddress: sellerAddress,
       amount : amount.value,
@@ -275,6 +424,34 @@ class InvoiceCreation extends React.Component{
     console.log("Seller Adress: " + invoice.sellerAddress);
     //Ajout d'invoice au contrat
     addInvoice(invoice);
+=======
+      Buyer: buyer.value,
+      Seller:seller.value,
+      amount : amount.value,
+      currency : unit.value,
+      DueDate:dueDate.value,
+      IssueDate : date,
+      Status:'',
+      SellerApproved: 1,
+      BuyerApproved:0,
+      BuyerPaid : 0,
+      SellerGotPaid: 0,
+      ServiceAttached : [] // for the TCI
+    }var invoice = {
+   string amount;
+   string currency;
+   string dueAt;
+   string issueAt;
+   address owner;
+   address counterpart;
+   bool sellerHasValidate;
+   bool buyerHasValidate;
+   bool sellerGotPaid;
+   bool HasTCI;
+   uint index;
+ }
+
+>>>>>>> 99b91d91112137b10637729878ddf2e816e64077
   }
 
   render(){
@@ -295,16 +472,28 @@ class InvoiceCreation extends React.Component{
              
                 <div>
                   <p>
+<<<<<<< HEAD
                     <label for='owner'>You are:</label><br/>
                     <input type="radio" name="type" id="seller" value="seller"> Seller </input> <br/>
                     <input type="radio" name="type" id="buyer" value="buyer"> Buyer </input>
+=======
+                    <label for='seller'>Seller</label><br/>
+
+                    <select name='seller' size='1' id='seller'>
+                       {buyerList}
+                    </select>
+>>>>>>> 99b91d91112137b10637729878ddf2e816e64077
                   </p>
 
 
                   <p>
                     <label for='counterpart'>Counterpart</label><br/>
 
+<<<<<<< HEAD
                     <select name='counterpart' size='1' id='counterpart'>
+=======
+                    <select name='buyer' size='1' id='buyer'>
+>>>>>>> 99b91d91112137b10637729878ddf2e816e64077
                       {buyerList}
                     </select>
                   </p>
@@ -312,8 +501,13 @@ class InvoiceCreation extends React.Component{
                    <p>
                     <label for='amount'>Amount</label><br/>
                     <input type="number" name="amount"  className= "amount" id="amount"/>
+<<<<<<< HEAD
 
                     <select name='unit' className="unit" size='1' id='unit'>
+=======
+                  
+                    <select name='buyer' className="unit" size='1' id='buyer'>
+>>>>>>> 99b91d91112137b10637729878ddf2e816e64077
                       <option value = "eur"> € </option>
                       <option value = "dol"> $ </option>
                       <option value = "pou"> £ </option>
@@ -325,8 +519,13 @@ class InvoiceCreation extends React.Component{
                     <input type="Date" name="dueDate" id="dueDate"/>
                   </p>
                 </div>
+<<<<<<< HEAD
                 <button onClick={()=>this.createInvoice()}> Submit </button>
               
+=======
+                <input type='submit' name='Submit' value='Submit' onClick={()=>this.createInvoice()}/>
+              </form>
+>>>>>>> 99b91d91112137b10637729878ddf2e816e64077
             </div>
           </div>
 
@@ -381,6 +580,10 @@ class InvoicesList extends React.Component{
     alert('Invoice Archived');
   }
 
+  archive(index){
+    alert('Invoice Archived');
+  }
+
   statusAction(index){
     // Invoice statuses
     var waitingForApproval = this.props.state.invoices[index].status == "Waiting for Approval";
@@ -412,6 +615,7 @@ class InvoicesList extends React.Component{
         return( <div className="invoiceActionInsideInactive" >Waiting for seller to get paid</div>);
     }
 
+<<<<<<< HEAD
     if (paid){
         return( <div className="invoiceActionInside" onClick={() => this.archive(index)}>Archive</div>);
     }
@@ -426,16 +630,73 @@ class InvoicesList extends React.Component{
     }
 
 
+=======
+    // Invoice statuses
+
+    var waitingForApproval = this.props.state.invoices[index].Status == "Waiting for Approval";
+    var late = this.props.state.invoices[index].Status == 'Late'; 
+    var paid = this.props.state.invoices[index].Status == 'Paid';
+    var awaitingPayment = this.props.state.invoices[index].Status == 'Awaiting Payment';
+
+    var iAmBuyer = this.props.state.invoices[index].Buyer.toLowerCase() == web3.eth.accounts[0].toLowerCase();
+    var buyerApproved = this.props.state.invoices[index].BuyerApproved;
+    var iAmSeller = this.props.state.invoices[index].Seller.toLowerCase() == web3.eth.accounts[0].toLowerCase();
+    var sellerApproved = this.props.state.invoices[index].SellerApproved;
+    var buyerPaid = this.props.state.invoices[index].BuyerPaid;
+    var sellerGotPaid = this.props.state.invoices[index].SellerGotPaid;
+
+
+    if (waitingForApproval){
+        if ((iAmBuyer && !buyerApproved) ||( iAmSeller && !sellerApproved))
+          return( <div className="invoiceActionInside" onClick={() => this.approveInvoice(index)}>Approve Invoice</div>);
+
+        if(iAmBuyer && buyerApproved)
+          return(<div className="invoiceActionInsideInactive" >Waiting Seller Approval</div>);
+
+        if(iAmSeller && sellerApproved)
+          return(<div className="invoiceActionInsideInactive" >Waiting Buyer Approval</div>);
+      }
+    if (late){
+      if ((iAmSeller && !sellerGotPaid))      
+        return( <div className="invoiceActionInside" onClick={() => this.declarePayment(index)}>Declare Payment</div>);
+      if ((iAmBuyer && !sellerGotPaid))
+        return( <div className="invoiceActionInsideInactive" >Waiting for seller to get paid</div>);
+    }
+
+    if (paid){
+        return( <div className="invoiceActionInside" onClick={() => this.archive(index)}>Archive</div>);
+    }
+
+    if (awaitingPayment){
+      if (iAmSeller && !sellerGotPaid)
+        return( <div className="invoiceActionInside" onClick={() => this.declarePayment(index)}>Declare Payment</div>);
+      if ((iAmBuyer && !sellerGotPaid)){
+        console.log('iAmBuyer')
+        return( <div className="invoiceActionInsideInactive" >Waiting for seller to get paid</div>);
+      }
+    }
+
+
+>>>>>>> 99b91d91112137b10637729878ddf2e816e64077
 
   }
 
   serviceAction(index){
+<<<<<<< HEAD
     var iAmSeller = this.props.state.invoices[index].sellerAddress.toLowerCase() == web3.eth.accounts[0].toLowerCase();
     if (iAmSeller){
       if (!this.props.state.invoices[index].HasTCI){
         return(<div className="serviceActionInside" onClick={() => this.subscribeTCI(index)}>Subscribe to a TCI</div>);
       }
       else if (this.props.state.invoices[index].status == "Late"){
+=======
+    var iAmSeller = this.props.state.invoices[index].Seller.toLowerCase() == web3.eth.accounts[0].toLowerCase();
+    if (iAmSeller){
+      if (this.props.state.invoices[index].ServiceAttached == ''){
+        return(<div className="serviceActionInside" onClick={() => this.subscribeTCI(index)}>Subscribe to a TCI</div>);
+      }
+      else if (this.props.state.invoices[index].Status == "Late"){
+>>>>>>> 99b91d91112137b10637729878ddf2e816e64077
         return(<div className="serviceActionInside" onClick={() => this.declareClaim(index)}>Declare a claim</div>);
       }
       else
@@ -576,8 +837,13 @@ class Error extends React.Component{
       );
   }
 
+<<<<<<< HEAD
 }
 
 
 ReactDOM.render(<App menudata={MENUDATA} accountsName = {ACCOUNTSNAME}/>,
 document.getElementById('content') );
+=======
+ReactDOM.render(<App menudata={MENUDATA} accountsName = {ACCOUNTSNAME}/>,
+ document.getElementById('content') );
+>>>>>>> 99b91d91112137b10637729878ddf2e816e64077
