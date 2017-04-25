@@ -168,6 +168,45 @@
   color: #FFFFFF;
 }
 
+.invoiceActionInsideInactive{
+  float: center;
+  margin: 0px;
+  padding:0px;
+  height: 100%;
+  background-color: #a9a9a9;
+  width:100%;
+  color: #FFFFFF;
+}
+
+.serviceAction{
+  float: right;
+  margin: 0px;
+  margin-top: 5px;
+  padding:0px;
+  height: 5em;
+  width:11%;
+}
+
+.serviceActionInside{
+  float: center;
+  margin: 0px;
+  padding:0px;
+  height: 100%;
+  background-color: #106fb3;
+  width:100%;
+  color: #FFFFFF;
+}
+
+.serviceActionInsideInactive{
+  float: center;
+  margin: 0px;
+  padding:0px;
+  height: 100%;
+  background-color: #a9a9a9;
+  width:100%;
+  color: #FFFFFF;
+}
+
 .invoiceSummary{
     float: left;
     margin: 5px;
@@ -514,13 +553,12 @@ input{
 input,
 select,
 textarea {
-  border: 0;
+  border: 1;
   border-bottom: solid 2px #CCC6C6;
   background-color: #f5f4f2;
   color: #6691C2;
   display: inline-block;
-  width: 300px;
-  max-width: 100%;
+  width: 70%;  
   margin-top: 0px;
   padding: 6.13333333px 16px;
   padding-bottom: 4.08888889px;
@@ -535,6 +573,16 @@ textarea {
   border-radius: 0;
   font-size: 1em;
   font-weight: 300;
+  height: 3em;
+}
+
+input.amount{
+  width: 45%;
+  padding-right: 3px;
+}
+
+ select.unit{
+  width: 20%;
 }
 
 textarea{
