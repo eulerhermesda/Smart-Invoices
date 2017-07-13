@@ -1,4 +1,4 @@
- pragma solidity ^0.4.8; 
+ 
 
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------MAIN CONTRACT-----------------------------------------------------------------------
@@ -11,18 +11,19 @@ contract TCI_admin {
 	uint public compteur;
 	address[] public invoiceAddressList;//lists the addresses of the conected clients
 	uint public initTime;
+	address scheduler = 0x26416b12610d26fd31d227456e9009270574038f; //TestNet only
 	address[]  who;
 	uint myWhoLength;
 	address owner;
 	
-//	modifier onlyBy1(address _from){//useful to enter invoices
-	// 	if (tx.origin != _from) throw;
-	// 	_
-	// }
-	// modifier onlyBy2(address _from1, address _from2){//useful to check the invoice
-	// 	if (tx.origin != _from1 && tx.origin != _from2) throw;
-	// 	_
-	// }
+	modifier onlyBy1(address _from){//useful to enter invoices
+		if (tx.origin != _from) throw;
+		_
+	}
+	modifier onlyBy2(address _from1, address _from2){//useful to check the invoice
+		if (tx.origin != _from1 && tx.origin != _from2) throw;
+		_
+	}
 	
 	
 	
@@ -154,11 +155,7 @@ contract TCI_admin {
 
 //saves that the person has paid, only accessible by him, and the other
 //there needs to be the two confirmations for it to be valid
-	function paiementConfirmation(bytes32 fro, bytes32 t)  {
-
-		// Reject if not coming from parties of the transaction
-		if (tx.origin != names[fro] && tx.origin != names[t]) throw;
-
+	function paiementConfirmation(bytes32 fro, bytes32 t) onlyBy2(names[fro],names[t]) {
 		for (uint j=0; j<invoices[names[fro]].length; j++){
 			if(invoices[names[fro]][j].to == names[t]){
 				if (tx.origin==names[fro]){
@@ -172,7 +169,23 @@ contract TCI_admin {
 		}
 	}
 
-
+	
+	//function callScheduler() onlyBy1(owner) /*atStage(Stages.safeEnter)*/{
+		/*for (uint k=0; k<invoiceAddressList.length; k++){
+			for (uint r=0; r<invoices[invoiceAddressList[k]].length; r++){
+				//the 4-byte abi signature of the called function
+				bytes4 sig = bytes4(sha3("checkFunction(invoiceList[k],r)"));
+				//the targeted block
+				//we use the expiration date by accessing the invoice of the list at the address "k" in the mapping
+				uint targetBlock = block.number + blocksUntilTime(invoices[invoiceAddressList[k]][r].expiration_date );
+				//the 4-byte signature of the scheduleCall function
+				bytes4 scheduleCallSig = bytes4(sha3("scheduleCall(bytes4,uint256)"));
+				//asks the Alarm Clock to create a "Call Contract"
+				scheduler.call(scheduleCallSig,sig,targetBlock);
+			}
+		}
+	}*/
+	
 //function used for ONE client, ONE invoice 
 //used to send a message readable why EVERYONE
 //I will need to implement a crypting system for the demo
@@ -231,16 +244,16 @@ contract TCI_client {
 	address public clientOwner;//the "owner" of this smart contract
 	uint ch = 0;
 	
-	// modifier onlyBy1(address _from){//useful to enter invoices
-	// 	if (tx.origin != _from) throw;
+	modifier onlyBy1(address _from){//useful to enter invoices
+		if (tx.origin != _from) throw;
 		
-	// 	_
-	// }
-	// modifier onlyBy2(address _from1, address _from2){//useful to check the invoice
-	// 	if (tx.origin != _from1 && tx.origin != _from2)throw;
+		_
+	}
+	modifier onlyBy2(address _from1, address _from2){//useful to check the invoice
+		if (tx.origin != _from1 && tx.origin != _from2)throw;
 
-	// 	_
-	// }
+		_
+	}
 	
 //-------------------EVENT-------------------------------------------------------------------------
 //does the same as hasPaid event from original admin contract, but alerts only the client linked to this smart contract
@@ -258,16 +271,12 @@ contract TCI_client {
 	}
 	
 //A function that accesses the manualEntry function of the main ADMIN CONTRACT, to store the invoices
-	function localManualEntry(bytes32 you, bytes32 other, uint256 entry, uint256 exp, address t) {
-
-		if (tx.origin != clientOwner) throw;
-
+	function localManualEntry(bytes32 you, bytes32 other, uint256 entry, uint256 exp, address t) onlyBy1(clientOwner) {
 		con.manualEntry(you,other,entry,exp,t);
 	}
 	
 
-	function localPaiementConfirmation(bytes32 fro, bytes32 t)  {
-		if (tx.origin != clientOwner) throw;
+	function localPaiementConfirmation(bytes32 fro, bytes32 t) onlyBy1(clientOwner) {
 		con.paiementConfirmation(fro,t);
 	}
 	
