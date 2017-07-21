@@ -21,7 +21,7 @@ truffle compile
 truffle migrate
 ```
 
-Copy the address of the Admin contract and open the file app/index.html. Click on the "Connect to account" Link and copy the address of the contract there.
+Copy the address of the Admin contract and open the file `app/index.html`. Click on the "Connect to account" Link and copy the address of the contract there.
 
 You are all set!
 
@@ -37,6 +37,5 @@ The project was designed as follow:
  * A _Client Contract_ representing invoices. This contract follows and register the events happening to an invoice.
 
 The representation of an invoice in this experiment is really basic, the experiment focuses more on exploring the interaction between the contracts and the users rather than modeling the exact business process.
-
-But our future experiments will also focus on modeling how a real invoice and Trade Financing process would be like.
+Our future experiments will also focus on modeling how a real invoice and Trade Financing process would be like.
 

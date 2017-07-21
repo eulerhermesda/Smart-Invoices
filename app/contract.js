@@ -23,7 +23,7 @@ function paiementConfirmation() {
 function manualEntry() {
 	var you = document.getElementById('yourName').value;
 	var other = document.getElementById('otherName').value;
-	var entry = document.getElementsById('Amount');
+	var entry = document.getElementsById('Amount').value;
 	var exp = 2000000000;
 	alert('test');
 	return false;

@@ -1,0 +1,26 @@
+Hello everyone,
+[Pause]
+--Intro to video--
+This is a video to present the SmartInvoice PoC that we built at the Digital agency. For more information you can go to ehda.co/insights.
+[Pause]
+--Intro to experiment--
+This prototype was created to test how a smart-contract could handle interactions between a seller and a buyer, and see how all of this could benefit the whole network of companies.
+The demo was made in order to show in the company how such a system works, it is not production-ready at all, but we think it does its job as a demo.
+[Pause]
+--Experiment--
+So here is the main interface, I am selecting :
+- who I am
+- my buyer
+- the amount of the invoice
+- And when I click "submit" everything is stored on the blockchain.
+[Pause]
+Now, let's imagine that I am the buyer, I want to inform my seller that I paid him. (In a real application this would be done by a bank or if the payment is done in Ether the transaction would trigger that action). 
+[Pause]
+So I say who I am, select the seller, and approve the transaction. Easy and simple.
+[Pause]
+Now, I am the seller, the due date of my invoice is arriving, I want to check whether my Buyer paid me. I go to the 'Alert' page, choose the invoice and ask for an alert.
+[Pause]
+And now when we go back to the main screen we can see that we have got paid!
+[Pause]
+--Conclusion--
+Ok so this was a demo version to show people the different steps of the process. We are currently working on a business-ready version of that where everything is streamlined, automated and adaptable. We are extremely excited to be able to tell you more about it later. Stay tuned!
