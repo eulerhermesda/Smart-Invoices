@@ -4,11 +4,10 @@
 		<meta charset="utf-8"/>
 		<link rel="stylesheet" href="dapp-styles.css" />
 		
-		<script src='https://raw.githubusercontent.com/ethereum/web3.js/0.16.0/dist/web3.min.js'></script>
-		<script src='text/javascript' src="package/compilation/contract.sol.js"></script>
-		<!--<script type="text/javascript" src="crypto/openpgp.min.js"></script>
-		<script type="text.javascript" src="crypto/openpgp.worker.min.js"></script>-->
-		<script src="contract.js">
+		<script type='text/javascript' src="javascripts/sha3.js"></script>
+		<script type="text/javascript" src="javascripts/RPC.js"></script> 
+		<script type="text/javascript" src="javascripts/abi.js"></script>
+		<script type="text/javascript" src="./contract.js"></script>
 			
 			
 			
@@ -56,26 +55,26 @@
 					<div class="dapp-container">
 						<h1>Confirm payment of an invoice: </h1>
 						<div>
-							<form method='get'>
+							<form method='get' onsubmit='return paiementConfirmation()'>
 								<div>
 									<p>
 										
-										<select name='yourConfirmation' size='1' id='yourConfirmation'>
+										<select name='yourConfirmation' size='1' id='yourName'>
 											<option value=''>You</option>
-											<option value='Mr White'>Mr White</option>
-											<option value='Mr Blonde'>Mr Blonde</option>
-											<option value='Mr Pink'>Mr Pink</option>
-											<option value='Mr Blue'>Mr Blue</option>
+											<option value="0x0658e04b00b45b3ec30a8f0d5175396773e12c81" type='string'>Mr White</option>
+											<option value="0x3d8619512771fb7c2b5df2cc64d766c320cc99c2" type='string'>Mr Blonde</option>
+											<option value="0x2f48ce3c1d472d1a4ec4ee0950b06ec59860716e" type='string'>Mr Pink</option>
+											<option value="0x2f48ce3c1d472d1a4ec4ee0950b06ec59860716e" type='string'>Mr Blue</option>
 										</select>
 									</p>
 									<p>
 										
 										<select name='hisConfirmation' size='1' id='hisConfirmation'>
 											<option value=''>Your client</option>
-											<option value='Mr White'>Mr White</option>
-											<option value='Mr Blonde'>Mr Blonde</option>
-											<option value='Mr Pink'>Mr Pink</option>
-											<option value='Mr Blue'>Mr Blue</option>
+											<option value="0x0658e04b00b45b3ec30a8f0d5175396773e12c81" type='string'>Mr White</option>
+											<option value="0x3d8619512771fb7c2b5df2cc64d766c320cc99c2" type='string'>Mr Blonde</option>
+											<option value="0x2f48ce3c1d472d1a4ec4ee0950b06ec59860716e" type='string'>Mr Pink</option>
+											<option value="0x2f48ce3c1d472d1a4ec4ee0950b06ec59860716e" type='string'>Mr Blue</option>
 										</select>
 									</p>
 									<input type='submit' value="Approve" >

@@ -75,9 +75,6 @@ contract TCI_admin {
 //MESSAGES------------------------------------------------------------------------
 
 	
-	
-	
-
 //--------------------------------------------------------------------------------
 	
 	
@@ -157,7 +154,7 @@ contract TCI_admin {
 	function paiementConfirmation(bytes32 fro, bytes32 t)  {
 
 		// Reject if not coming from parties of the transaction
-		if (tx.origin != names[fro] && tx.origin != names[t]) throw;
+		if (tx.origin != names[fro] && tx.origin != names[t]) revert();
 
 		for (uint j=0; j<invoices[names[fro]].length; j++){
 			if(invoices[names[fro]][j].to == names[t]){
@@ -230,52 +227,86 @@ contract TCI_client {
 	TCI_admin public con;
 	address public clientOwner;//the "owner" of this smart contract
 	uint ch = 0;
+	struct myEvent{
+		uint time;
+		string messageFor;
+		bytes32 client;
+		bytes32 who1;
+		string paid;
+		bytes32 who2;
+	}
+	myEvent[] events;
+	uint eventSize=0;
 	
-	// modifier onlyBy1(address _from){//useful to enter invoices
-	// 	if (tx.origin != _from) throw;
+// 	// modifier onlyBy1(address _from){//useful to enter invoices
+// 	// 	if (tx.origin != _from) throw;
 		
-	// 	_
-	// }
-	// modifier onlyBy2(address _from1, address _from2){//useful to check the invoice
-	// 	if (tx.origin != _from1 && tx.origin != _from2)throw;
+// 	// 	_
+// 	// }
+// 	// modifier onlyBy2(address _from1, address _from2){//useful to check the invoice
+// 	// 	if (tx.origin != _from1 && tx.origin != _from2)throw;
 
-	// 	_
-	// }
+// 	// 	_
+// 	// }
 	
-//-------------------EVENT-------------------------------------------------------------------------
-//does the same as hasPaid event from original admin contract, but alerts only the client linked to this smart contract
-	event localHasPaid(uint _time, string _messageFor, bytes32  _client,bytes32  _who1, string _paid, bytes32  _who2);
+// //-------------------EVENT-------------------------------------------------------------------------
+// //does the same as hasPaid event from original admin contract, but alerts only the client linked to this smart contract
+// //	event localHasPaid(uint _time, string _messageFor, bytes32  _client,bytes32  _who1, string _paid, bytes32  _who2);
 	
-//-------------------CONSTRUCTOR FUNCTION----------------------------------------------------------
+// //-------------------CONSTRUCTOR FUNCTION----------------------------------------------------------
 	function TCI_client(bytes32 name, address client, address _admin){
 		Name=name;
 		clientOwner= client;
 		
 		admin=_admin;
 		con = TCI_admin(admin);
-		con.getNew(this, Name);
+		con.getNew(address(this), Name);
 		
+	}
+
+	function resetEvents(){
+		eventSize = 0;
+	}
+
+	function getEvent (uint i) constant returns (uint, string, bytes32, bytes32, string, bytes32){
+		return (events[i].time, events[i].messageFor, events[i].client,events[i].who1,events[i].paid,events[i].who2);
+	}
+	function getEventSize() constant returns (uint){
+		return eventSize;
 	}
 	
 //A function that accesses the manualEntry function of the main ADMIN CONTRACT, to store the invoices
 	function localManualEntry(bytes32 you, bytes32 other, uint256 entry, uint256 exp, address t) {
 
-		if (tx.origin != clientOwner) throw;
+		if (tx.origin != clientOwner) revert();
 
 		con.manualEntry(you,other,entry,exp,t);
 	}
 	
 
 	function localPaiementConfirmation(bytes32 fro, bytes32 t)  {
-		if (tx.origin != clientOwner) throw;
+		if (tx.origin != clientOwner) revert();
 		con.paiementConfirmation(fro,t);
 	}
 	
 	function localCheck(uint _time, string _messageFor, bytes32 _client, bytes32 _who1, string _paid, bytes32 _who2){
 		ch = 1;
-		localHasPaid(_time, _messageFor, _client, _who1, _paid, _who2);
-		
+		addEvent(_time, _messageFor, _client, _who1, _paid, _who2);
 	}
+
+	function addEvent(uint _time, string _messageFor, bytes32 _client, bytes32 _who1, string _paid, bytes32 _who2){
+		myEvent memory tmp;
+		tmp.time = _time;
+		tmp.messageFor = _messageFor;
+		tmp.client = _client;
+		tmp.who1 = _who1;
+		tmp.paid = _paid;
+		tmp.who2 = _who2;
+		events.push(tmp);
+		eventSize++;		
+	}
+
+
 	
 }
 

@@ -260,15 +260,15 @@ contract TCI_client {
 	event localHasPaid(uint _time, string _messageFor, bytes32  _client,bytes32  _who1, string _paid, bytes32  _who2);
 	
 //-------------------CONSTRUCTOR FUNCTION----------------------------------------------------------
-	function TCI_client(bytes32 name, address client, address _admin){
-		Name=name;
-		clientOwner= client;
+	// function TCI_client(bytes32 name, address client, address _admin){
+	// 	Name=name;
+	// 	clientOwner= client;
 		
-		admin=_admin;
-		con = TCI_admin(admin);
-		con.getNew(this, Name);
+	// 	admin=_admin;
+	// 	con = TCI_admin(admin);
+	// 	//con.getNew(this, Name);
 		
-	}
+	// }
 	
 //A function that accesses the manualEntry function of the main ADMIN CONTRACT, to store the invoices
 	function localManualEntry(bytes32 you, bytes32 other, uint256 entry, uint256 exp, address t) onlyBy1(clientOwner) {

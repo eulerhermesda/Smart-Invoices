@@ -3,22 +3,14 @@
 	<head>
 		<meta charset="utf-8"/>
 		<link rel="stylesheet" href="dapp-styles.css" />
-		
-		<script type='text/plain' src="https://raw.githubusercontent.com/ethereum/web3.js/0.16.0/dist/web3.min.js"></script>
-		<script type='text/javascript' src="package/compilation/contract.sol.js"></script>
-		<!--<script src='crypto/openpgp.min.js'></script>
-		<script src='crypto/openpgp.worker.min.js'></script>-->
-		<script src="./contract.js">
-			
-			
-			
 
-		</script>
+		<script type='text/javascript' src="javascripts/sha3.js"></script>
+		<script type="text/javascript" src="javascripts/RPC.js"></script> 
+		<script type="text/javascript" src="javascripts/abi.js"></script>
+		<script type="text/javascript" src="./contract.js"></script>
 	</head>
-	<body bgcolor='#E6E6FA'>
-		
-		
-			
+	<body bgcolor='#E6E6FA' onload="checkAlerts()">
+
 			<header class="dapp-header">
 					<nav>
 						<ul>
@@ -57,16 +49,16 @@
 					<div class="dapp-container">
 						<h1>Enter your invoice info:</h1>
 						<div>
-							<form method="get" action="./index2.html" onsubmit='return manualEntry()'>
+							<form method="get"  onsubmit='return manualEntry()'>
 								<div>
 									<p>
 
-										<select name='yourName' size='1' id='yourName'>
+										<select name='yourName' onchange="setCurrentAccount()" size='1' id='yourName'>
 											<option value='' type='string'>You</option>
-											<option value='Mr White' type='string'>Mr White</option>
-											<option value='Mr Blonde' type='string'>Mr Blonde</option>
-											<option value='Mr Pink' type='string'>Mr Pink</option>
-											<option value='Mr Blue' type='string'>Mr Blue</option>
+											<option value="0x0658e04b00b45b3ec30a8f0d5175396773e12c81" type='string'>Mr White</option>
+											<option value="0x3d8619512771fb7c2b5df2cc64d766c320cc99c2" type='string'>Mr Blonde</option>
+											<option value="0x2f48ce3c1d472d1a4ec4ee0950b06ec59860716e" type='string'>Mr Pink</option>
+											<option value="0x2f48ce3c1d472d1a4ec4ee0950b06ec59860716e" type='string'>Mr Blue</option>
 										</select>
 									</p>
 
@@ -76,23 +68,25 @@
 
 										<select name='otherName' size='1' id='otherName'>
 											<option value='' type='string'>Your Client</option>
-											<option value='Mr White' type='string'>Mr White</option>
-											<option value='Mr Blonde' type='string'>Mr Blonde</option>
-											<option value='Mr Pink' type='string'>Mr Pink</option>
-											<option value='Mr Blue' type='string'>Mr Blue</option>
+											<option value="0x0658e04b00b45b3ec30a8f0d5175396773e12c81" type='string'>Mr White</option>
+											<option value="0x3d8619512771fb7c2b5df2cc64d766c320cc99c2" type='string'>Mr Blonde</option>
+											<option value="0x2f48ce3c1d472d1a4ec4ee0950b06ec59860716e" type='string'>Mr Pink</option>
+											<option value="0x2f48ce3c1d472d1a4ec4ee0950b06ec59860716e" type='string'>Mr Blue</option>
 										</select>
 									</p>
 									<input type="number" id="Amount" placeholder="Amount">
+									<br/>
+									<input type="Date" id="Date" placeholder="Due Date">
 
 								</div>
-								<input type='submit' >
+								<input type='submit' value='Create Invoice' >
 							</form>
 						</div>
 						<div>
 						<form method='post'>
 							<p>
-								<label for='message'>Alerts</label><br/>
-								<textarea name='message' id='message' rows='5'></textarea>
+								<label for='alerts'>Alerts</label><br/>
+								<textarea name='alerts' id='message' rows='5'>Mr Blonde has paid Mr White</textarea>
 							</p>
 						</form>
 					</div>
